@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  backswtesis:
+    build: .
+    restart: always
+    container_name: backswtesis
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code_free
+    ports:
+      - "8080:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings
+      - DEBUG=True
+      - SECRET_KEY=django-insecure---&r5uu^d_j%@t%*(srr^jn4vl$ug_m6!ncba&09z#@sg*!h*k
+      - ALLOWED_HOSTS=*
+
+  databaseswtesis:
+    image: postgres:13
+    restart: always
+    container_name: databaseswtesis
+    environment:
+      - POSTGRES_DB=swtesis
+      - POSTGRES_USER=adolmos194
+      - POSTGRES_PASSWORD=pelachito1
+    ports:
+      - "4300:5432"
