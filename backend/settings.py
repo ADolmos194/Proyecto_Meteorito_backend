@@ -85,13 +85,23 @@ DATABASES = {
     }
 }
 # CORS Config
-CORS_ALLOW_ALL_ORIGINS = False 
+CORS_ALLOW_ALL_ORIGINS = False  # Evita abrirlo a todos los orígenes
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Para desarrollo
-    "https://proyectometeoritoswtesis.netlify.app", 
+    "http://localhost:4200",  # Desarrollo
+    "https://proyectometeoritoswtesis.netlify.app",  # Producción
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "x-csrftoken",
+]
+
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]  # Si descargas archivos
+
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
