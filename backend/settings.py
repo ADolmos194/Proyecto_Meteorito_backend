@@ -1,7 +1,16 @@
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Asegura que este directorio exista
+
+# Asegurar que Django busque archivos estáticos en las apps
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 
 # Quick-start development settings - unsuitable for production
@@ -13,14 +22,21 @@ SECRET_KEY = 'django-insecure---&r5uu^d_j%@t%*(srr^jn4vl$ug_m6!ncba&09z#@sg*!h*k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'proyectometeorito-backend-604aeb96f320.herokuapp.com', 
+    'https://proyectometeoritoswtesis.netlify.app/',
+    'localhost',
+    '127.0.0.1',
+]
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200', 
+    'https://proyectometeoritoswtesis.netlify.app/',
+]
 
-# Application definition
+CORS_ALLOW_ALL_ORIGINS = False 
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-)
 
 
 INSTALLED_APPS = [
