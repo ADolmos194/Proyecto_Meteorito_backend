@@ -1,7 +1,5 @@
 from pathlib import Path
-from dotenv import load_dotenv
 
-load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -49,15 +47,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://proyectometeoritoswtesis.netlify.app",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://proyectometeoritoswtesis.netlify.app",
-]
-CORS_ALLOW_ALL_ORIGINS = True
-
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -82,19 +71,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-import os
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("SUPABASE_DB_NAME"),
-        'USER': os.getenv("SUPABASE_DB_USER"),
-        'PASSWORD': os.getenv("SUPABASE_DB_PASSWORD"),
-        'HOST': os.getenv("SUPABASE_DB_HOST"),
-        'PORT': os.getenv("SUPABASE_DB_PORT"),
+        'NAME': 'swtesis',
+        'USER': 'adolmos194',
+        'PASSWORD': 'pelachito1',
+        'HOST': 'databaseswtesis',
+        'PORT': '5432',
     }
 }
-
 
 
 # Password validation

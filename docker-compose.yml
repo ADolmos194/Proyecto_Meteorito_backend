@@ -1,23 +1,30 @@
-version: '3.9'
+version: '3.9'  # Define la versión de Docker Compose que se está usando
 
 services:
+  # Servicio para la aplicación Django
   backswtesis:
-    build: .  
-    restart: always  
-    container_name: backswtesis  
-    command: python manage.py runserver 0.0.0.0:8000  
+    build: .  # Construye la imagen del contenedor desde el Dockerfile en el directorio actual
+    restart: always  # Reinicia el contenedor automáticamente si se detiene
+    container_name: backswtesis  # Nombre del contenedor para este servicio
+    command: python manage.py runserver 0.0.0.0:8000  # Comando para iniciar el servidor de desarrollo de Django
     volumes:
-      - .:/code_free  
+      - .:/code_free  # Mapea el directorio actual en la máquina local al contenedor en /code_free
     ports:
-      - "8080:8000"  
+      - "8080:8000"  # Expone el puerto 8000 del contenedor al puerto 8080 en la máquina local
     environment:
-      - DJANGO_SETTINGS_MODULE=backend.settings  
-      - DEBUG=True  
-      - SECRET_KEY=django-insecure---&r5uu^d_j%@t%*(srr^jn4vl$ug_m6!ncba&09z#@sg*!h*k  
-      - ALLOWED_HOSTS=*
-      - SUPABASE_DB_NAME=postgres 
-      - SUPABASE_DB_USER=postgres.enmwboxeagizifyvnxys 
-      - SUPABASE_DB_PASSWORD=Pelachito1@ 
-      - SUPABASE_DB_HOST=aws-0-ca-central-1.pooler.supabase.com
-      - SUPABASE_DB_PORT=5432  
+      - DJANGO_SETTINGS_MODULE=backend.settings  # Configuración de settings de Django
+      - DEBUG=True  # Modo de depuración activado (no usar en producción)
+      - SECRET_KEY=django-insecure---&r5uu^d_j%@t%*(srr^jn4vl$ug_m6!ncba&09z#@sg*!h*k  # Clave secreta de Django
+      - ALLOWED_HOSTS=*  # Permite todas las direcciones IP o dominios (cambiar en producción)
 
+  # Servicio para la base de datos PostgreSQL
+  databaseswtesis:
+    image: postgres:13  # Usa la imagen oficial de PostgreSQL versión 13
+    restart: always  # Reinicia el contenedor automáticamente si se detiene
+    container_name: databaseswtesis  # Nombre del contenedor para este servicio
+    environment:
+      - POSTGRES_DB=swtesis  # Nombre de la base de datos a crear
+      - POSTGRES_USER=adolmos194  # Usuario de la base de datos
+      - POSTGRES_PASSWORD=pelachito1  # Contraseña del usuario de la base de datos
+    ports:
+      - "4300:5432"  # Expone el puerto 5432 de PostgreSQL al puerto 4300 en la máquina local
