@@ -24,14 +24,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'proyectometeorito-backend-604aeb96f320.herokuapp.com', 
-    'https://proyectometeoritoswtesis.netlify.app/',
+    'https://proyectometeoritoswtesis.netlify.app',
     'localhost',
     '127.0.0.1',
 ]
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:4200', 
-    'https://proyectometeoritoswtesis.netlify.app/',
+    'https://proyectometeoritoswtesis.netlify.app',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False 
