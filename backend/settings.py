@@ -36,6 +36,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://proyectometeoritoswtesis.netlify.app",
 ]
 
+
 CORS_ALLOW_CREDENTIALS = True 
 
 CSRF_TRUSTED_ORIGINS = [
