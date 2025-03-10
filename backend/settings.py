@@ -31,11 +31,14 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-)
-
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "https://proyectometeoritoswtesis.netlify.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True 
+
+CSRF_TRUSTED_ORIGINS = [
     "https://proyectometeoritoswtesis.netlify.app",
 ]
 
