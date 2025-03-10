@@ -49,7 +49,7 @@ class Clientes(models.Model):
 class Tesis(models.Model):
     
     clientes = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    tesis = models.CharField(max_length=255, null=True, blank=True)
+    nombre_tesis = models.CharField(max_length=255, null=True, blank=True)
     universidad = models.CharField(max_length=100, null=True, blank=True)
     usuario_plataforma = models.CharField(max_length=25, null=True, blank=True)
     clave_plataforma = models.CharField(max_length=25, null=True, blank=True)
@@ -58,10 +58,12 @@ class Tesis(models.Model):
     fecha_modificacion = models.DateTimeField(auto_now=True)
     
     class Meta:
+        
         db_table = "tesis"
         
     def __str__(self):
-	    return '%s' % (self.tesis)
+        
+        return '%s' % (self.nombre_tesis)
 
 class Pagos(models.Model):
     
@@ -73,13 +75,16 @@ class Pagos(models.Model):
     monto_cuotas = models.CharField(max_length=100, null=True, blank=True)
     cuotas_cancelado = models.CharField(max_length=100, null=True, blank=True)
     monto_cancelado = models.CharField(max_length=100, null=True, blank=True)
+    #Monto faltante a cancelar
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
     
     class Meta:
+        
         db_table = "pagos"
         
     def __str__(self):
-	    return '%s' % (self.monto_completo)
+        
+        return '%s' % (self.monto_completo)
 

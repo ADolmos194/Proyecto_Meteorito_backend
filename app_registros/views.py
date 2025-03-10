@@ -51,6 +51,7 @@ def obtener_nombre_por_id(tabla, id):
         logger.error(f"Error al obtener el nombre de {tabla} con id {id}: {str(e)}")
         return "Error al obtener nombre"
 
+################################# CRUD CLIENTES #################################
 @api_view(["GET"])
 @transaction.atomic
 def listar_clientes(request):
@@ -406,3 +407,331 @@ def eliminar_cliente(request, id):
     return JsonResponse(dic_response, status=200)
 
 
+#SOLO CLIENTES ACTIVOS
+@api_view(["GET"])
+@transaction.atomic
+def listar_clientes_activos(request):
+    
+    dic_response = {
+        "code": 400,
+        "status": "error",
+        "message": "Clientes activos no encontradas",
+        "message_user": "Clientes activos no encontradas",
+        "data": [],
+    }
+
+    if request.method == "GET":
+        try:
+            
+            # Realiza la consulta SQL para obtener a los clientes activos
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT
+                        c.id,
+                        c.nombre_completo as nombre,
+                        c.estado_id,
+                        TO_CHAR(c.fecha_creacion, 'YYYY-MM-DD HH24:MI:SS') as fecha_creacion,
+                        TO_CHAR(c.fecha_modificacion, 'YYYY-MM-DD HH24:MI:SS') as fecha_modificacion
+                    FROM Clientes c
+                    LEFT JOIN Tipodocumento td ON c.tipodocumento_id = td.id
+                    WHERE c.estado_id IN (1)
+                    ORDER BY c.id DESC
+                    """
+                )
+                dic_clientes = ConvertirQueryADiccionarioDato(cursor)
+                cursor.close()
+
+            # Actualiza la respuesta con los datos obtenidos
+            dic_response.update(
+                {
+                    "code": 200,
+                    "status": "success",
+                    "message_user": "Clientes activos obtenidas correctamente",
+                    "message": "Clientes activos obtenidas correctamente",
+                    "data": dic_clientes,
+                }
+            )
+            return JsonResponse(dic_response, status=200)
+
+        except DatabaseError as e:
+            logger.error(f"Error al listar los clientes activos: {str(e)}")
+            dic_response.update(
+                {"message": "Error al listar los clientes activos", "data": str(e)}
+            )
+            return JsonResponse(dic_response, status=500)
+
+    
+    # Retorna una respuesta vacía si el método no es GET
+    return JsonResponse([], safe=False, status=status.HTTP_200_OK)
+
+
+################################# CRUD TESIS #################################
+@api_view(["GET"])
+@transaction.atomic
+def listar_tesis(request):
+        
+    dic_response = {
+        "code": 400,
+        "status": "error",
+        "message": "Tesis no encontradas",
+        "message_user": "Tesis no encontradas",
+        "data": [],
+    }
+
+    if request.method == "GET":
+        try: 
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT
+                        t.id,
+                        t.clientes_id,
+                        c.nombre_completo,
+                        t.nombre_tesis,
+                        t.universidad,
+                        t.usuario_plataforma,
+                        t.clave_plataforma,
+                        t.estado_id,
+                        TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD HH24:MI:SS') as fecha_creacion,
+                        TO_CHAR(t.fecha_modificacion, 'YYYY-MM-DD HH24:MI:SS') as fecha_modificacion
+                    FROM Tesis t
+                    LEFT JOIN Clientes c ON t.clientes_id = c.id
+                    WHERE t.estado_id IN (1, 2)
+                    ORDER BY t.id DESC
+                    """
+                )
+                dic_tesis = ConvertirQueryADiccionarioDato(cursor)
+                cursor.close()
+
+            # Actualiza la respuesta con los datos obtenidos
+            dic_response.update(
+                {
+                    "code": 200,
+                    "status": "success",
+                    "message_user": "Tesis obtenidas correctamente",
+                    "message": "Tesis obtenidas correctamente",
+                    "data": dic_tesis,
+                }
+            )
+            return JsonResponse(dic_response, status=200)
+
+        except DatabaseError as e:
+            logger.error(f"Error al listar las Tesis: {str(e)}")
+            dic_response.update(
+                {"message": "Error al listar las Tesis", "data": str(e)}
+            )
+            return JsonResponse(dic_response, status=500)
+
+    
+    # Retorna una respuesta vacía si el método no es GET
+    return JsonResponse([], safe=False, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@transaction.atomic
+def crear_tesis(request):
+    
+    dic_response = {
+        "code": 400,
+        "status": "error",
+        "message": "Error al crear la tesis",
+        "message_user": "Error al crear la tesis",
+        "data": [],
+    }
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            data["estado"] = 1 
+            data["fecha_creacion"] = datetime.now()  
+            data["fecha_modificacion"] = datetime.now()  
+
+            estado_nombre = obtener_nombre_por_id('Estado', data["estado"])
+
+            serializer = TesisSerializer(data=data)
+
+            if serializer.is_valid():
+            
+                with connection.cursor() as cursor:
+
+                    nombre_tesis = data["nombre_tesis"]
+                    
+                    cursor.execute(
+                        "SELECT nombre_tesis FROM Tesis WHERE (nombre_tesis='{0}') and estado_id IN (1, 2)".format(nombre_tesis)
+                    )
+                    if len(cursor.fetchall()) > 0:
+                        dic_response.update(
+                            {"message_user": "Ya existe una tesis con el mismo Nombre ", "message": "Ya hay un dato existente."}
+                        )
+                        return JsonResponse(dic_response, status=400)
+                
+                    cursor.close()
+
+                serializer.save()
+
+                dic_response.update(
+                    {
+                        "code": 201,
+                        "status": "success",
+                        "message_user": "Tesis creado exitosamente",
+                        "message": "Tesis creado exitosamente",
+                        "data": serializer.data
+                    }
+                )
+
+                logger.info(
+                    f"Tesis creado exitosamente: {data['nombre_tesis']} - {estado_nombre} (ID: {serializer.data['id']})"
+                )
+
+                return JsonResponse(dic_response, status=201)
+
+            dic_response.update(
+                {
+                    "data": serializer.errors,
+                }
+            )
+            return JsonResponse(dic_response, status=400)
+
+        except Exception as e:
+            logger.error(f"Error inesperado al crear al Tesis: {str(e)}")
+            dic_response.update(
+                {"message_user": "Error inesperado", "data": {"error": str(e)}}
+            )
+            return JsonResponse(dic_response, status=500)
+
+    return Response([], status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@transaction.atomic
+def actualizar_tesis(request, id):
+
+    dic_response = {
+        "code": 400,
+        "status": "error",
+        "message": "Error al actualizar la tesis",
+        "message_user": "Error al actualizar la tesis",
+        "data": [],
+    }
+
+    if request.method == "PUT":
+        try:
+            
+            data = json.loads(request.body)
+            
+            data["fecha_modificacion"] = datetime.now()
+
+            estado_nombre = obtener_nombre_por_id('Estado', data["estado"])
+            
+            try:
+                queryset = Tesis.objects.using('default').get(id=id)
+            except Tesis.DoesNotExist:
+                
+                return JsonResponse(dic_response, safe=False, status=status.HTTP_404_NOT_FOUND)
+
+            
+            serializer = TesisSerializer(queryset, data=data)
+
+            if serializer.is_valid():
+
+                with connection.cursor() as cursor:
+
+                    nombre_tesis = data["nombre_tesis"]
+                    estado = data["estado"]
+                    
+                    cursor.execute("SELECT nombre_tesis FROM Tesis WHERE (nombre_tesis='{0}') and estado_id = {1} and id <> {2}".format(nombre_tesis, estado, id))
+                    if len(cursor.fetchall()) > 0:
+                        dic_response.update(
+                            {"message_user": "Ya existe una tesis con el mismo n° de nombre", "message": "Ya hay un dato existente."}
+                        )
+                        return JsonResponse(dic_response, status=400)
+
+                    cursor.close()
+
+                serializer.save()
+                
+                dic_response.update(
+                    {
+                        "code": 200,
+                        "status": "success",
+                        "message_user": "Tesis actualizado exitosamente",
+                        "message": "Tesis actualizado exitosamente",
+                        "data": serializer.data
+                    }
+                )
+
+                logger.info(
+                    f"Tesis actualizado exitosamente: {nombre_tesis} - {estado_nombre} (ID: {id})"
+                )
+                return JsonResponse(dic_response, status=200)
+
+            dic_response.update(
+                {
+                    "message_user": "Datos inválidos.",
+                    "data": serializer.errors,
+                }
+            )
+            return JsonResponse(dic_response, status=400)
+
+        except Exception as e:
+
+            logger.error(f"Error inesperado al actualizar el tesis: {str(e)}")
+            dic_response.update(
+                {"message_user": "Error inesperado", "data": {"error": str(e)}}
+            )
+            return JsonResponse(dic_response, status=500)
+
+    return JsonResponse([], status=200)
+
+
+@api_view(["DELETE"])
+@transaction.atomic
+def eliminar_tesis(request, id):
+
+    dic_response = {
+        "code": 400,
+        "status": "error",
+        "message": "Error al eliminar la Tesis",
+        "message_user": "Error al eliminar la Tesis",
+        "data": [],
+    }
+
+    if request.method == "DELETE":
+        try:
+
+            data = {"estado": 3}        
+
+            try:
+                queryset = Tesis.objects.using('default').get(id=id)
+
+                queryset.estado = Estado.objects.using('default').get(id=data["estado"])
+                queryset.fecha_modificacion = datetime.now()
+                
+                queryset.save()
+
+                serializer = TesisSerializer(queryset)
+
+                dic_response.update(
+                    {
+                        "code": 200,
+                        "status": "success",
+                        "message_user": "Tesis eliminado lógicamente",
+                        "message": "Tesis eliminado lógicamente",
+                        "data": serializer.data,
+                    }
+                )
+
+                logger.info(f"Tesis eliminado logicamente: (ID: {id})")
+                
+                return JsonResponse(dic_response, status=200)
+
+            except Tesis.DoesNotExist:
+                return JsonResponse(dic_response, safe=False, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            logger.error(f"Error inesperado al eliminar la Tesis: {str(e)}")
+            dic_response["message"] = "Error inesperado"
+            return JsonResponse(dic_response, status=500)
+
+    return JsonResponse(dic_response, status=200)

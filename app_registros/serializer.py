@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    Clientes, 
+    Clientes, Tesis
     )
 
 ################################################## GENERAL ############################################################
@@ -20,3 +20,11 @@ class ClientesSerializer(serializers.ModelSerializer):
         
         # Incluye todos los campos del modelo en la serialización
         fields = '__all__' 
+        
+class TesisSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        
+        model = Tesis
+        
+        fields = '__all__'
