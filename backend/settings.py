@@ -49,6 +49,15 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "https://proyectometeoritoswtesis.netlify.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://proyectometeoritoswtesis.netlify.app",
+]
+CORS_ALLOW_ALL_ORIGINS = True
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [

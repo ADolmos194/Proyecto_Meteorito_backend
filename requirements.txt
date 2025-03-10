@@ -62,3 +62,4 @@ mysqlclient
 # - Conector para bases de datos MySQL en Python.
 # - Utilizado para conectar y realizar operaciones en bases de datos MySQL desde Django.
 
+python-dotenv
