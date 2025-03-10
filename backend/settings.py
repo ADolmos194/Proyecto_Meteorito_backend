@@ -84,19 +84,14 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+# CORS Config
+CORS_ALLOW_ALL_ORIGINS = False 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "https://proyectometeoritoswtesis.netlify.app",
-]
-CORS_ALLOW_ALL_ORIGINS = True 
-CORS_ALLOW_CREDENTIALS = True 
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:4200",
-    "https://proyectometeoritoswtesis.netlify.app",
+    "http://localhost:4200",  # Para desarrollo
+    "https://proyectometeoritoswtesis.netlify.app", 
 ]
 
+CORS_ALLOW_CREDENTIALS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
