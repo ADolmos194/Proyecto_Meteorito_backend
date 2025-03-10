@@ -36,7 +36,7 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 CORS_ALLOWED_ORIGINS = [
-    "https://proyectometeoritoswtesis.netlify.app/",
+    "https://proyectometeoritoswtesis.netlify.app",
 ]
 
 INSTALLED_APPS = [
