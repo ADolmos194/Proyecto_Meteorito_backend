@@ -1,14 +1,6 @@
-import os
 from pathlib import Path
 
-
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,6 +17,12 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:4200',
+)
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,14 +39,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -84,23 +81,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-# CORS Config
-CORS_ALLOW_ALL_ORIGINS = False  # Evita abrirlo a todos los orígenes
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Desarrollo
-    "https://proyectometeoritoswtesis.netlify.app",  # Producción
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    "content-type",
-    "authorization",
-    "x-csrftoken",
-]
-
-CORS_EXPOSE_HEADERS = ["Content-Disposition"]  # Si descargas archivos
-
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 
 # Password validation
