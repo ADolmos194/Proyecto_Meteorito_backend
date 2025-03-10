@@ -19,12 +19,21 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copiar el código fuente al contenedor
 COPY . .
 
+# Instalar netcat para verificar la base de datos
+RUN apt-get update && apt-get install -y netcat
+
+# Copiar el script wait-for-it.sh y darle permisos de ejecución
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# Esperar a que la base de datos esté lista antes de migrar
+RUN /wait-for-it.sh databaseswtesis:5432 --strict --timeout=30 -- python manage.py migrate
+
+# Ejecutar la recolección de archivos estáticos
+RUN python manage.py collectstatic --noinput
+
 # Exponer el puerto
 EXPOSE 8000
-
-# Asegurar que la migración y la recolección de archivos estáticos se realicen antes de iniciar
-RUN python manage.py migrate
-RUN python manage.py collectstatic --noinput
 
 # Comando de inicio
 CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers=3", "--threads=2"]
