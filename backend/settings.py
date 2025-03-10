@@ -35,6 +35,9 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
 )
 
+CORS_ALLOWED_ORIGINS = [
+    "https://proyectometeoritoswtesis.netlify.app/",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
